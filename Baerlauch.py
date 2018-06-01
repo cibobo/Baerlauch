@@ -168,20 +168,29 @@ class TradingChecker(object):
 
         return False
 
-symbol_list = ['ICXETH', 'EOSETH']
+# symbol_list = ['ICXETH', 'EOSETH']
+
+symbol_list = ['ADAETH', 'ADXETH', 'AEETH', 'AIONETH', 'AMBETH', 'APPCETH', 'ARKETH', 'ARNETH', 'ASTETH', 'BATETH', 'BCCETH', 'BCDETH', 'BCPTETH', 'BLZETH', 'BNBETH', 'BNTETH', 'BQXETH', 'BRDETH', 'BTGETH', 'BTSETH', 'CDTETH', 'CHATETH', 'CMTETH', 'CNDETH', 'CTRETH', 'DASHETH', 'DGDETH', 'DLTETH', 'DNTETH', 'EDOETH', 'ELFETH', 'ENGETH', 'ENJETH', 'EOSETH', 'ETCETH', 'EVXETH', 'FUELETH', 'FUNETH', 'GTOETH', 'GVTETH', 'GXSETH', 'HSRETH', 'ICNETH', 'ICXETH', 'INSETH', 'IOSTETH', 'IOTAETH']
 
 testlist = {}
+
+last_timestamp = time.time()
 
 for symbol in symbol_list:
     print("Creation of the object ", symbol)
     testlist[symbol] = TradingChecker(symbol)
 
 while True:
+    # calculate how much time should be waiting for
+    time_diff = time.time() - last_timestamp
+    # wait for the next candle cyclic
+    time.sleep(60-time_diff)
+    
     for test in testlist:
         testlist[test].checkTradingChance()
     
     print("------------------ one cycle is completed --------------")
 
-    time.sleep(60)
+    last_timestamp = time.time()
 
 
