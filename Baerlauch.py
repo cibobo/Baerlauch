@@ -38,7 +38,7 @@ class TradingChecker(object):
         print(self.trading_vol)
 
         # Create a dict for record volumn
-        self.record_vol = deque()
+        self.record_vol = deque(maxlen=self.record_number)
 
         # save the current timestamp to keep 1 min cyclic
         self.last_timestamp = time.time()
@@ -76,6 +76,7 @@ class TradingChecker(object):
         param['symbol'] = self.symbol
 
         result = BinanceRestLib.getService('klines', param)[0]
+        print(self.symbol, "---------------------------")
         print(result)
 
         # update the average values
@@ -85,7 +86,6 @@ class TradingChecker(object):
         result_float = numpy.array(result).astype(numpy.float)
         self.average = self.average*factor + result_float*(1-factor) 
         print(self.average)
-
 
         if self.isBuyChance(self.symbol, result_float):
             # get current price
@@ -134,9 +134,9 @@ class TradingChecker(object):
             record = [result[5]/self.average[5], time.time()]
 
             self.record_vol.append(record)
-            # check how many records are already exists. Remove the left one if the size is over defined
-            if len(self.record_vol) > self.record_number:
-                self.record_vol.popleft()
+            # # check how many records are already exists. Remove the left one if the size is over defined
+            # if len(self.record_vol) > self.record_number:
+            #     self.record_vol.popleft()
 
             # update record volumn
             for i in range(len(self.record_vol)):
@@ -170,7 +170,8 @@ class TradingChecker(object):
 
 # symbol_list = ['ICXETH', 'EOSETH']
 
-symbol_list = ['ADAETH', 'ADXETH', 'AEETH', 'AIONETH', 'AMBETH', 'APPCETH', 'ARKETH', 'ARNETH', 'ASTETH', 'BATETH', 'BCCETH', 'BCDETH', 'BCPTETH', 'BLZETH', 'BNBETH', 'BNTETH', 'BQXETH', 'BRDETH', 'BTGETH', 'BTSETH', 'CDTETH', 'CHATETH', 'CMTETH', 'CNDETH', 'CTRETH', 'DASHETH', 'DGDETH', 'DLTETH', 'DNTETH', 'EDOETH', 'ELFETH', 'ENGETH', 'ENJETH', 'EOSETH', 'ETCETH', 'EVXETH', 'FUELETH', 'FUNETH', 'GTOETH', 'GVTETH', 'GXSETH', 'HSRETH', 'ICNETH', 'ICXETH', 'INSETH', 'IOSTETH', 'IOTAETH']
+symbol_list = ['ADAETH', 'DASHETH', 'DGDETH', 'DLTETH', 'DNTETH', 'EDOETH', 'ELFETH', 'ENGETH', 'ENJETH', 'EOSETH', 'ETCETH', 'EVXETH', 'FUELETH', 'FUNETH', 'GTOETH', 'GVTETH', 'GXSETH', 'HSRETH', 'ICNETH', 'ICXETH', 'INSETH', 'IOSTETH', 'IOTAETH']
+print(len(symbol_list))
 
 testlist = {}
 
@@ -189,7 +190,7 @@ while True:
     for test in testlist:
         testlist[test].checkTradingChance()
     
-    print("------------------ one cycle is completed --------------")
+    print("------------------ one cycle is completed @ ",str(datetime.fromtimestamp(time.time())), "--------------")
 
     last_timestamp = time.time()
 
