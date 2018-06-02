@@ -15,7 +15,7 @@ class TradingChecker(object):
     init_limit = 100
 
     # Static parameters for volumn comparision
-    record_factor = 1
+    record_factor = 3
     record_number = 3
 
     # Test coins
@@ -143,6 +143,8 @@ class TradingChecker(object):
                 # calculate time diff in minute
                 time_diff = int((time.time() - self.record_vol[i][1])/60)
                 # 2b,2c: recalculate the reocred volumn (factor) with a exponential function
+                #TODO: more exact definition should be done for the decrease factor
+                # set 1.2 firstly, so that the record will be reduced to 1/4 after 7.6 min.
                 self.record_vol[i][0] = self.record_vol[i][0]/(1.5**time_diff)
 
             print("Between volumn check:  ")
