@@ -59,7 +59,7 @@ class TradingChecker(object):
         param['limit'] = self.init_limit
 
         result = BinanceRestLib.getService('klines', param)
-        # print(result)
+        print(result)
 
         # Use numpy to transfer the data to matrix in order to simplify the further work
         R = numpy.array(result).astype(numpy.float)
@@ -77,7 +77,7 @@ class TradingChecker(object):
 
         result = BinanceRestLib.getService('klines', param)[0]
         print(self.symbol, "---------------------------")
-        print(result)
+        # print(result)
 
         # update the average values
         # in order to save the memory space, use a weighted moving averag to simulate the simple moving average, 
@@ -85,7 +85,7 @@ class TradingChecker(object):
         factor =0.975
         result_float = numpy.array(result).astype(numpy.float)
         self.average = self.average*factor + result_float*(1-factor) 
-        print(self.average)
+        # print(self.average)
 
         if self.isBuyChance(self.symbol, result_float):
             # get current price
@@ -145,7 +145,7 @@ class TradingChecker(object):
                 # 2b,2c: recalculate the reocred volumn (factor) with a exponential function
                 #TODO: more exact definition should be done for the decrease factor
                 # set 1.2 firstly, so that the record will be reduced to 1/4 after 7.6 min.
-                self.record_vol[i][0] = self.record_vol[i][0]/(1.5**time_diff)
+                self.record_vol[i][0] = self.record_vol[i][0]/(1.4**time_diff)
 
             print("Between volumn check:  ")
             print(self.record_vol)
@@ -172,12 +172,25 @@ class TradingChecker(object):
 
 # symbol_list = ['ICXETH', 'EOSETH']
 
-symbol_list = ['ADAETH', 'DASHETH', 'DGDETH', 'DLTETH', 'DNTETH', 'EDOETH', 'ELFETH', 'ENGETH', 'ENJETH', 'EOSETH', 'ETCETH', 'EVXETH', 'FUELETH', 'FUNETH', 'GTOETH', 'GVTETH', 'GXSETH', 'HSRETH', 'ICNETH', 'ICXETH', 'INSETH', 'IOSTETH', 'IOTAETH']
+symbol_list = ['ADAETH','ADXETH','AEETH','AIONETH','AMBETH','APPCETH','ARKETH','ARNETH','ASTETH',
+'BATETH','BCCETH','BCDETH','BCPTETH','BLZETH','BNBETH','BNTETH','BQXETH','BRDETH','BTGETH','BTSETH',
+'CDTETH','CHATETH','CMTETH','CNDETH','CTRETH','DASHETH','DGDETH','DLTETH','DNTETH','EDOETH','ELFETH',
+'ENGETH','ENJETH','EOSETH','ETCETH','EVXETH','FUELETH','FUNETH','GTOETH','GVTETH','GXSETH','HSRETH',
+'ICNETH','ICXETH','INSETH','IOSTETH','IOTAETH','KMDETH','KNCETH','LENDETH','LINKETH','LRCETH','LSKETH',
+'LTCETH','LUNETH','MANAETH','MCOETH','MDAETH','MODETH','MTHETH','MTLETH','NANOETH','NAVETH','NCASHETH',
+'NEBLETH','NEOETH','NULSETH','OAXETH','OMGETH','ONTETH','OSTETH','PIVXETH','POAETH','POEETH','POWRETH',
+'PPTETH','QSPETH','QTUMETH','RCNETH','RDNETH','REQETH','RLCETH','RPXETH','SALTETH','SNGLSETH','SNMETH',
+'SNTETH','STEEMETH','STORJETH','STORMETH','STRATETH','SUBETH','TNBETH','TNTETH','TRIGETH','TRXETH','VENETH',
+'VIAETH','VIBETH','VIBEETH','WABIETH','WAVESETH','WINGSETH','WTCETH','XLMETH','XMRETH','XRPETH','XVGETH',
+'XZCETH','YOYOETH','ZECETH','ZILETH','ZRXETH']
+
 print(len(symbol_list))
 
 testlist = {}
 
 last_timestamp = time.time()
+
+print(time.time())
 
 for symbol in symbol_list:
     print("Creation of the object ", symbol)
@@ -196,4 +209,16 @@ while True:
 
     last_timestamp = time.time()
 
+# begin_time = time.time()
+# end_time = time.time()
 
+# while True:
+#     begin_time = time.time()
+#     for i in range(1000000):
+#         a = 1+i
+#     time.sleep(5-(begin_time-end_time))
+#     # time.sleep(2)
+#     end_time = time.time()
+#     # print(end_time-begin_time)
+#     print(time.time())
+    
