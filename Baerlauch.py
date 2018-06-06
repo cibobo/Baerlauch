@@ -214,7 +214,7 @@ while True:
     time_diff = end_time - begin_time
     print("Time usage in last round:", time_diff)
     # wait for the next candle cyclic
-    time.sleep(120-time_diff)
+    time.sleep(80-time_diff)
 
 # begin_time = time.time()
 # end_time = time.time()
