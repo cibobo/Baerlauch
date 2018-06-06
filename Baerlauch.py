@@ -145,7 +145,7 @@ class TradingChecker(object):
                 # 2b,2c: recalculate the reocred volumn (factor) with a exponential function
                 #TODO: more exact definition should be done for the decrease factor
                 # set 1.2 firstly, so that the record will be reduced to 1/4 after 7.6 min.
-                self.record_vol[i][0] = self.record_vol[i][0]/(1.4**time_diff)
+                self.record_vol[i][0] = self.record_vol[i][0]/(1.1**time_diff)
 
             print("Between volumn check:  ")
             print(self.record_vol)
@@ -188,7 +188,8 @@ print(len(symbol_list))
 
 testlist = {}
 
-last_timestamp = time.time()
+begin_time = time.time()
+
 
 print(time.time())
 
@@ -196,29 +197,41 @@ for symbol in symbol_list:
     print("Creation of the object ", symbol)
     testlist[symbol] = TradingChecker(symbol)
 
+end_time = time.time()
+time.sleep(end_time-begin_time)
+
 while True:
-    # calculate how much time should be waiting for
-    time_diff = time.time() - last_timestamp
-    # wait for the next candle cyclic
-    time.sleep(60-time_diff)
-    
+    begin_time = time.time()
+
     for test in testlist:
         testlist[test].checkTradingChance()
-    
+
     print("------------------ one cycle is completed @ ",str(datetime.fromtimestamp(time.time())), "--------------")
 
-    last_timestamp = time.time()
+    end_time = time.time()
+
+    # calculate how much time should be waiting for
+    time_diff = end_time - begin_time
+    print("Time usage in last round:", time_diff)
+    # wait for the next candle cyclic
+    time.sleep(120-time_diff)
 
 # begin_time = time.time()
 # end_time = time.time()
 
 # while True:
 #     begin_time = time.time()
-#     for i in range(1000000):
+#     print(begin_time)
+#     for i in range(100000):
 #         a = 1+i
-#     time.sleep(5-(begin_time-end_time))
-#     # time.sleep(2)
 #     end_time = time.time()
-#     # print(end_time-begin_time)
-#     print(time.time())
+#     time.sleep(2-(end_time-begin_time))
+#     # time.sleep(2)
+    
+#     if end_time == begin_time:
+#         print("What the fuck!")
+#     else:
+#         print(round(end_time-begin_time,20))
+#         print(end_time-begin_time)
+#     print(end_time)
     
