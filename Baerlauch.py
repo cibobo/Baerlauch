@@ -15,8 +15,12 @@ class TradingChecker(object):
     init_limit = 100
 
     # Static parameters for volumn comparision
-    record_factor = 3
+    record_factor = 10
     record_number = 3
+
+    # Static parameter for exponential decrease function
+    # set 1.2 firstly, so that the record will be reduced to 1/4 after 7.6 min.
+    alpha = 1.2
 
     # Test coins
     symbol_vol = 0
@@ -101,6 +105,11 @@ class TradingChecker(object):
             file_out.write("Trading Volumn: " + str(self.average[5]) + " | " + result[5] + '\n')
             # save current price
             file_out.write("Current price: " + str(price['asks_vol']) + '\n')
+            # save volumn record
+            file_out.write("Saved Volumn: ")
+            for i in range(self.record_number):
+                file_out.write("[" + str(self.record_vol[i][0]) + ", " + str(self.record_vol[i][1]) + "], ")
+            file_out.write("\n")
 
             file_out.close()
 
@@ -112,6 +121,8 @@ class TradingChecker(object):
             print("Trading Volumn: " + str(self.average[5]) + " | " + result[5] + '\n')
             # save current price
             print("Current price: " + str(price['asks_vol']) + '\n')
+            # save volumn record
+            print("Saved Volumn: " + self.record_vol)
 
     def isBuyChance(self, symbol, result):
         # The checking rule is constructed by two parts:
@@ -144,8 +155,8 @@ class TradingChecker(object):
                 time_diff = int((time.time() - self.record_vol[i][1])/60)
                 # 2b,2c: recalculate the reocred volumn (factor) with a exponential function
                 #TODO: more exact definition should be done for the decrease factor
-                # set 1.2 firstly, so that the record will be reduced to 1/4 after 7.6 min.
-                self.record_vol[i][0] = self.record_vol[i][0]/(1.1**time_diff)
+                
+                self.record_vol[i][0] = self.record_vol[i][0]/(self.alpha**time_diff)
 
             print("Between volumn check:  ")
             print(self.record_vol)
@@ -214,7 +225,7 @@ while True:
     time_diff = end_time - begin_time
     print("Time usage in last round:", time_diff)
     # wait for the next candle cyclic
-    time.sleep(80-time_diff)
+    time.sleep(120-time_diff)
 
 # begin_time = time.time()
 # end_time = time.time()
