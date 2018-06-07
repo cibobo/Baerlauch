@@ -15,12 +15,12 @@ class TradingChecker(object):
     init_limit = 100
 
     # Static parameters for volumn comparision
-    record_factor = 10
+    record_factor = 5
     record_number = 3
 
     # Static parameter for exponential decrease function
     # set 1.2 firstly, so that the record will be reduced to 1/4 after 7.6 min.
-    alpha = 1.2
+    alpha = 1.1
 
     # Test coins
     symbol_vol = 0
