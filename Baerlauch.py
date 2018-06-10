@@ -154,7 +154,7 @@ class TradingChecker(object):
             # update record volumn
             for i in range(len(self.record_vol)):
                 # calculate time diff in minute
-                time_diff = int((time.time() - self.record_vol[i][1])/60)
+                time_diff = int((time.time() - self.record_vol[i][1])/300)
                 # 2b,2c: recalculate the reocred volumn (factor) with a exponential function
                 #TODO: more exact definition should be done for the decrease factor
                 
