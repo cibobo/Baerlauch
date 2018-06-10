@@ -10,8 +10,10 @@ import BinanceRestLib
 
 class TradingChecker(object):
     #TODO: use other time interval instead the fixed 1m
-    init_interval = '5m'
-    running_interval = '1m'
+    init_interval = '15m'
+    running_interval = '5m'
+    interval_factor = 3
+
     init_limit = 100
 
     # Static parameters for volumn comparision
@@ -32,8 +34,8 @@ class TradingChecker(object):
         
         # Save all average values
         self.average = self.calcuAverageValue(symbol)
-        # reduce the volumn average based on 1m
-        self.average[5] = self.average[5]/5 
+        # reduce the volumn average based on 5m
+        self.average[5] = self.average[5]/self.interval_factor 
 
         # save the trading volum based on current credit
         self.trading_vol = self.initTradingVolumn(symbol)
@@ -225,7 +227,7 @@ while True:
     time_diff = end_time - begin_time
     print("Time usage in last round:", time_diff)
     # wait for the next candle cyclic
-    time.sleep(120-time_diff)
+    time.sleep(300-time_diff)
 
 # begin_time = time.time()
 # end_time = time.time()
