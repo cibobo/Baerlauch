@@ -138,6 +138,9 @@ class TradingChecker(object):
         # 2e. the recorded volumn will be removed, if it times weight factor is smaller than average volumn
 
 
+        if len(self.record_vol)>0:
+            print(self.record_vol)
+
         # 2a: if trading volumn is n times bigger than average
         if result[5] > self.average[5]*self.record_factor:
             print("Before volumn check:  ")
