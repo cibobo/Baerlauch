@@ -11,6 +11,7 @@ import BinanceRestLib
 class TradingChecker(object):
     #TODO: use other time interval instead the fixed 1m
     init_interval = '15m'
+    #TODO: replace 300 also with a parameter related to running_interval
     running_interval = '5m'
     interval_factor = 3
 
@@ -174,12 +175,14 @@ class TradingChecker(object):
 
             # 2d: compare the record average with pre-defined record factor; check whether enough record is colleected
             weighted_avg = 0
-            if len(self.record_vol)>self.record_number:
+            if len(self.record_vol)>=self.record_number:
                 weighted_avg = (numpy.mean(self.record_vol, axis=0)/len(self.record_vol))[0]
         
             print("Weigth is: ", weighted_avg)
 
             if weighted_avg > self.record_factor:
+                # clean the record
+                self.record_vol = deque(maxlen=self.record_number)
                 return True
             else:
                 return False
