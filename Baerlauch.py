@@ -127,6 +127,9 @@ class TradingChecker(object):
             # save volumn record
             print("Saved Volumn: " + self.record_vol)
 
+            # clean the record
+            self.record_vol = deque(maxlen=self.record_number)
+
     def isBuyChance(self, symbol, result):
         # The checking rule is constructed by two parts:
         # 1. the current price must be higher than the last candle data
@@ -181,8 +184,6 @@ class TradingChecker(object):
             print("Weigth is: ", weighted_avg)
 
             if weighted_avg > self.record_factor:
-                # clean the record
-                self.record_vol = deque(maxlen=self.record_number)
                 return True
             else:
                 return False
