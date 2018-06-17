@@ -125,7 +125,10 @@ class TradingChecker(object):
             # save current price
             print("Current price: " + str(price['asks_vol']) + '\n')
             # save volumn record
-            print("Saved Volumn: " + self.record_vol)
+            print("Saved Volumn", end=": " )
+            for item in self.record_vol:
+                print(item[0], ",  ", item[1], end=" | ")
+            print()
 
             # clean the record
             self.record_vol = deque(maxlen=self.record_number)
