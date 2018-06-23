@@ -41,6 +41,9 @@ class TradingChecker(object):
         # save the trading volum based on current credit
         self.trading_vol = self.initTradingVolumn(symbol)
 
+        # use average close price as the beginnng last price
+        self.last_price = self.average[4]
+
         print(self.average)
         print(self.trading_vol)
 
@@ -98,44 +101,49 @@ class TradingChecker(object):
             # get current price
             price = BinanceRestLib.getCurrentPrice(self.symbol[:-3], self.symbol[-3:], self.trading_vol)
 
-            # record the information
-            file_out = open('TradingInfo.log','a')
-            file_out.write(str(datetime.fromtimestamp(time.time())))
-            file_out.write("Find buy change for: " + self.symbol + '\n')
-            # save data with "average | current"
-            file_out.write("Open Price: " + str(self.average[1]) + " | " + result[1] + '\n')
-            file_out.write("Close Price: " + str(self.average[4]) + " | " + result[4] + '\n')
-            file_out.write("Trading Volumn: " + str(self.average[5]) + " | " + result[5] + '\n')
-            # save current price
-            file_out.write("Current price: " + str(price['asks_vol']) + '\n')
-            # save volumn record
-            file_out.write("Saved Volumn: ")
-            for i in range(self.record_number):
-                file_out.write("[" + str(self.record_vol[i][0]) + ", " + str(self.record_vol[i][1]) + "], ")
-            file_out.write("\n")
+            # check whether the current price is bigger than the last close price
+            if float(price['asks_vol']) > self.last_price:
+                # record the information
+                file_out = open('TradingInfo.log','a')
+                file_out.write(str(datetime.fromtimestamp(time.time())))
+                file_out.write("Find buy change for: " + self.symbol + '\n')
+                # save data with "average | current"
+                file_out.write("Open Price: " + str(self.average[1]) + " | " + result[1] + '\n')
+                file_out.write("Close Price: " + str(self.average[4]) + " | " + result[4] + '\n')
+                file_out.write("Trading Volumn: " + str(self.average[5]) + " | " + result[5] + '\n')
+                # save current price
+                file_out.write("Current price: " + str(price['asks_vol']) + '\n')
+                # save volumn record
+                file_out.write("Saved Volumn: ")
+                for i in range(self.record_number):
+                    file_out.write("[" + str(self.record_vol[i][0]) + ", " + str(self.record_vol[i][1]) + "], ")
+                file_out.write("\n")
 
-            file_out.close()
+                file_out.close()
 
-            print(str(datetime.fromtimestamp(time.time())))
-            print("Find buy change for: " + self.symbol + '\n')
-            # save data with "average | current"
-            print("Open Price: " + str(self.average[1]) + " | " + result[1] + '\n')
-            print("Close Price: " + str(self.average[4]) + " | " + result[4] + '\n')
-            print("Trading Volumn: " + str(self.average[5]) + " | " + result[5] + '\n')
-            # save current price
-            print("Current price: " + str(price['asks_vol']) + '\n')
-            # save volumn record
-            print("Saved Volumn", end=": " )
-            for item in self.record_vol:
-                print(item[0], ",  ", item[1], end=" | ")
-            print()
+                print(str(datetime.fromtimestamp(time.time())))
+                print("Find buy change for: " + self.symbol + '\n')
+                # save data with "average | current"
+                print("Open Price: " + str(self.average[1]) + " | " + result[1] + '\n')
+                print("Close Price: " + str(self.average[4]) + " | " + result[4] + '\n')
+                print("Trading Volumn: " + str(self.average[5]) + " | " + result[5] + '\n')
+                # save current price
+                print("Current price: " + str(price['asks_vol']) + '\n')
+                # save volumn record
+                print("Saved Volumn", end=": " )
+                for item in self.record_vol:
+                    print(item[0], ",  ", item[1], end=" | ")
+                print()
 
-            # clean the record
-            self.record_vol = deque(maxlen=self.record_number)
+                # clean the record
+                self.record_vol = deque(maxlen=self.record_number)
+
+        # update history price with close price in last candle whatever buy or not
+        self.last_price = result_float[4]
 
     def isBuyChance(self, symbol, result):
         # The checking rule is constructed by two parts:
-        # 1. the current price must be higher than the last candle data
+        # 1. the current price must be higher than the last candle data (moved out of this function)
         # 2. there must be a continually increase of the trading volumn
         # In order to implement 2, following condition should be filled:
         # 2a. if trading volumn is n times bigger than average, the timestamp and volumn will be recorded
@@ -167,7 +175,6 @@ class TradingChecker(object):
                 time_diff = int((time.time() - self.record_vol[i][1])/300)
                 # 2b,2c: recalculate the reocred volumn (factor) with a exponential function
                 #TODO: more exact definition should be done for the decrease factor
-                
                 self.record_vol[i][0] = self.record_vol[i][0]/(self.alpha**time_diff)
 
             print("Between volumn check:  ")
