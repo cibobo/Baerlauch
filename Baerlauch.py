@@ -135,6 +135,9 @@ class TradingChecker(object):
                     print(item[0], ",  ", item[1], end=" | ")
                 print()
 
+                self.last_price = float(price['asks_vol'])
+                self.last_timestamp = time.time()
+                self.simulateBuy()
                 # clean the record
                 self.record_vol = deque(maxlen=self.record_number)
 
@@ -200,6 +203,36 @@ class TradingChecker(object):
 
         return False
 
+    def simulateBuy(self):
+        file_out = open('TradingInfo.log','a')
+        # loop until reach the target sell price
+        while True:
+            price = BinanceRestLib.getCurrentPrice(self.symbol[:-3], self.symbol[-3:], self.trading_vol)
+            if float(price['bids_vol'])>self.last_price*1.1:
+                file_out.write("Target Price is reached!!! \n")
+                file_out.write("Simulate sell the coin with price: " + str(price['bids_vol']) + "\n")
+                break
+
+            # if the price is never go through the wish one
+            if time.time() - self.last_timestamp > 18000:
+                file_out.write("Price is not reached......... \n")
+                file_out.write("Current price is: " + str(price['bids_vol']) + "\n")
+                break
+
+            # Save price
+            file_out.write(str(datetime.now()))
+            file_out.write("     |     " + str(price['bids_vol']) + "\n")
+            time.sleep(60)
+
+        file_out.close()
+
+# Save trading data for further test
+def createSaveTestData(symbol):
+    test_data_save_name = "TestData_" + symbol + "_" + datetime.now().strftime("%Y_%m_%d_%H_%M") 
+    test_file = open(test_data_save_name, 'a')
+    test_file.write("[")
+    return test_file
+        
 # symbol_list = ['ICXETH', 'EOSETH']
 
 symbol_list = ['ADAETH','ADXETH','AEETH','AIONETH','AMBETH','APPCETH','ARKETH','ARNETH','ASTETH',
